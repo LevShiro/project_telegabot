@@ -1,0 +1,4 @@
+welcome {user_name}
+hello
+this is the test message
+/img pictures/sticker.webp
