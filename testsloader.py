@@ -84,6 +84,9 @@ def kompege(nom):
             out = base64.b64decode(out)
             rec = str(jres['number']) + '-' + str(nom) + '.png'
 
+        if rec in images:
+            print('images dublication')
+            continue
         f = open('tests/inf/images/' + rec, 'wb')
         f.write(out)
         f.close()
@@ -101,6 +104,9 @@ def kompege(nom):
         if not res.ok:
             continue
         print('load file', rec)
+        if name + '-' + i['name'] in files:
+            print('file dublication')
+            continue
         f = open('tests/inf/files/' + name + '-' + i['name'], 'wb')
         f.write(res.content)
         f.close()
@@ -137,11 +143,14 @@ def findmins():
     f.close()
 
 kompege(14405)
+kompege(15313)
+
 exit()
-findmins()
-for i in range(12780, 13200):
+for i in range(12780, 13000):
     try:
         if kompege(i):
             print('saved', i)
     except:
         print('GLOBAL EXEPTION!!!')
+findmins()
+

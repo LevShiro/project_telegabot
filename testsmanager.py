@@ -15,11 +15,12 @@ def thread():
         else:
             a = requests.pop()
             if a[0] == 0:
+                
                 if 0 > a[1] - 1 >= len(infnoms):
-                    all.testrdy(None, a[3])
+                    all.testrdy(None, a[3], None)
                     continue
                 if len(infnoms[a[1] - 1]) < 1:
-                    all.testrdy(None, a[3])
+                    all.testrdy(None, a[3], None)
                     continue
                 b = 100000000
                 for i, j in infnoms[a[1] - 1].items():
@@ -34,7 +35,7 @@ def thread():
                     try:
                         f = open('tests/inf/files/' + res['files'][i], 'rb')
                     except:
-                        all.testrdy(None, a[3])
+                        all.testrdy(None, a[3], None)
                         continue
                     res['files'][i] = f 
 
@@ -42,16 +43,18 @@ def thread():
                     try:
                         f = open('tests/inf/images/' + res['images'][i], 'rb')
                     except:
-                        all.testrdy(None, a[3])
+                        all.testrdy(None, a[3], None)
                         continue
                     res['images'][i] = f.read()
                     f.close()
+                res['nomer'] = a[1]
+                res['id'] = b
+                print('loaded test', a[1], 'nomer', b)
                 all.testrdy(res, a[3], (a[1], b))
                 continue
 
 
 
-        print('tests working')
 
 
 
