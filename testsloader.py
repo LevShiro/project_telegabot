@@ -21,6 +21,7 @@ endstr = '","key":"'
 startsolvestr = '"solve_text":"'
 endsolvestr = '","'
 def kompege(nom):
+    print('load task', nom)
     try:
         res = requests.get("https://kompege.ru/api/v1/task/" + str(nom)) 
     except:
@@ -41,24 +42,69 @@ def kompege(nom):
     if jres['number'] > 100:
         print('number > 100')
         return False
-    if jres['number'] == 2:
+    if jres['number'] == -2:
         print('cannot parse 2 nom')
         return False
-    sp = BeautifulSoup(res.content, 'html.parser')
-    st = sp.text.find(startstr)
-    st += len(startstr)
-    end = sp.text.find(endstr)
-    if end - st < 10:
+    sp = BeautifulSoup(jres['text'], 'html.parser')
+    mas = sp.find_all(recursive=False)
+
+    resulttext = ''
+    for i in range(len(mas)):
+
+        if mas[i].name != 'table':
+            resulttext += mas[i].text
+        else:
+            a = mas[i].find_all('tr')
+            st = ''
+            for i in a:
+                for j in i.find_all('td'):
+                    st += j.text + '\t'
+                st += '\n'
+                #print(st)
+
+            resulttext += '\n' + st
+    #resulttext = sp.text
+    if len(resulttext) < 10:
         print('result str is to small')
         return False
-    resulttext = sp.text[st:end]
+    
     resulttext = resulttext.replace('\\n', '\n', 1000)
+    resulttext1 = ''
+    k = 0
+    for i in resulttext:
+        if i == '\n':
+            k += 1
+            if k > 3:
+                continue
+        else:
+            k = 0
+        resulttext1 += i
+    resulttext = resulttext1
+    
     ansver = jres['key']
-    st = sp.text.find(startsolvestr)
-    st += len(startsolvestr)
-    end = sp.text[st:].find(endsolvestr) + st
-    ans_text = sp.text[st:end]
 
+    sp = BeautifulSoup(jres['solve_text'], 'html.parser')
+    mas = sp.find_all(recursive=False)
+    while len(mas) == 1:
+        mas = mas[0].find_all(recursive=False)
+    ans_text = ''
+    for it in mas:
+
+        if it.name == 'pre':
+
+            #it.contents = it.contents.replace('<br />', '\n', 1000)
+            st = '\n'
+            for i in it.contents:
+                if i.name == 'br':
+                    st += '\n'
+                else:
+                    st += i.text
+            ans_text += st + '\n'
+        else:
+            ans_text += it.text
+
+    
+    
     a = sp.find_all('img')
     images = []
     for i in a: ############################# files
@@ -113,7 +159,7 @@ def kompege(nom):
         files.append(name + '-' + i['name'])
     record = {'question': resulttext, 'ansver': ansver, 'solve': ans_text, 'files': files, 'images': images}
     a = str(jres['number']) + '-' + str(nom)
-    print(record['question'])
+    print(resulttext)
     print('saved', a)
     f = open('tests/inf/tests/' + a + '.json', 'w')
     json.dump(record, f)
@@ -142,10 +188,11 @@ def findmins():
         f.write('\n')
     f.close()
 
-kompege(14405)
-kompege(15313)
 
-exit()
+
+
+#kompege(14405)
+
 for i in range(12780, 13000):
     try:
         if kompege(i):
