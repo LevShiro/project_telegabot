@@ -1,21 +1,22 @@
 from vars import all
 import os
 import json
-
+from time import time
 
 infnoms = []
 # 0[type] 1[nomer] 2[pref nom] 3[msg]
 requests = set()
 
 def thread():
-    
+    print('starting thread tests')
     while True:
+        all.threadtesttime = time()
+
         if len(requests) < 1:
             all.threadtestslocker.acquire()
         else:
             a = requests.pop()
             if a[0] == 0:
-                
                 if 0 > a[1] - 1 >= len(infnoms):
                     all.testrdy(None, a[3], None)
                     continue
@@ -54,6 +55,40 @@ def thread():
                 continue
 
 
+
+            elif a[0] == 1:
+                nom = -1
+                for i in range(len(infnoms)):
+                    if a[1] in infnoms[i]:
+                        nom = i
+                        break
+                if nom == -1:
+                    all.testrdy(None, a[3], None)
+                    continue
+                b = a[1]
+                f = open('tests/inf/tests/' + infnoms[nom][b])
+                res = json.load(f)
+                f.close()
+                for i in range(len(res['files'])):
+                    try:
+                        f = open('tests/inf/files/' + res['files'][i], 'rb')
+                    except:
+                        all.testrdy(None, a[3], None)
+                        continue
+                    res['files'][i] = f 
+
+                for i in range(len(res['images'])):
+                    try:
+                        f = open('tests/inf/images/' + res['images'][i], 'rb')
+                    except:
+                        all.testrdy(None, a[3], None)
+                        continue
+                    res['images'][i] = f.read()
+                    f.close()
+                res['nomer'] = nom
+                res['id'] = b
+                print('loaded test', nom, 'nomer', b)
+                all.testrdy(res, a[3], (nom + 1, b))
 
 
 

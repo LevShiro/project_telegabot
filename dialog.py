@@ -12,7 +12,13 @@ templates = {'start': [[], 'templates/welcome.txt', 1],
              'what': [[], 'templates/what.txt', 1],
              'truly': [[], 'templates/sucses.txt', 1],
              'falsely': [[], 'templates/no sucsess.txt', 1],
-             'empty': [[(0, '')], 'templates/empty.txt', 1]
+             'empty': [[(0, '')], 'templates/empty.txt', 1],
+             'whatstats': [[], 'templates/what statistics.txt', 1],
+             'no_data': [[], 'templates/no data.txt', 1],
+             'bad_stats': [[], 'templates/bad_stats.txt', 1],
+             'test_nomer': [[], 'templates/test nomer.txt', 1],
+             'what_id': [[], 'templates/what nomer.txt', 1],
+             'uncorrect_id': [[], 'templates/uncorrect id.txt', 1]
     }
 
 data = {}
