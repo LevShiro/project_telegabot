@@ -57,6 +57,7 @@ def thread():
                     print('add new info')
             if a[1] == 2:#0[id] 1[type] 2[msg] 3[task nom] 4[true or false]
                 print('saving', a[0], 'stats')
+                st = ''
                 if a[4]:
                     st = 'T' + str(a[3])
                 else:

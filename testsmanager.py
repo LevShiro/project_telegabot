@@ -67,6 +67,7 @@ def thread():
                     continue
                 b = a[1]
                 f = open('tests/inf/tests/' + infnoms[nom][b])
+                nom += 1
                 res = json.load(f)
                 f.close()
                 for i in range(len(res['files'])):
