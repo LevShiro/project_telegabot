@@ -16,6 +16,28 @@ def rege(nom):
         if 'Тип' in b:
             flag = True
 
+
+def parsetext(sp):
+    mas = sp.find_all(recursive=False)
+
+    resulttext = ''
+    for i in mas:
+
+        if i.name != 'table':
+            resulttext += i.text
+        else:
+            for i2 in i.find_all('tbody', recursive=False):
+                a = i2.find_all('tr', recursive=False)
+                st = ''
+                for ii in a:
+                    for j in ii.find_all('td', recursive=False):
+                        st += parsetext(j) + '\t'
+                    st += '\n'
+                    #print(st)
+                resulttext += '\n' + st
+    return resulttext
+
+
 startstr = '"text":"'
 endstr = '","key":"'
 startsolvestr = '"solve_text":"'
@@ -42,29 +64,12 @@ def kompege(nom):
     if jres['number'] > 100:
         print('number > 100')
         return False
-    if jres['number'] == -2:
-        print('cannot parse 2 nom')
-        return False
+
     sp = BeautifulSoup(jres['text'], 'html.parser')
-    mas = sp.find_all(recursive=False)
-
-    resulttext = ''
-    for i in range(len(mas)):
-
-        if mas[i].name != 'table':
-            resulttext += mas[i].text
-        else:
-            a = mas[i].find_all('tr')
-            st = ''
-            for i in a:
-                for j in i.find_all('td'):
-                    st += j.text + '\t'
-                st += '\n'
-                #print(st)
-
-            resulttext += '\n' + st
+    resulttext = parsetext(sp)
+   
     #resulttext = sp.text
-    if len(resulttext) < 10:
+    if len(resulttext) < 10 and len(sp.find_all('img')) < 1:
         print('result str is to small')
         return False
     
@@ -72,9 +77,9 @@ def kompege(nom):
     resulttext1 = ''
     k = 0
     for i in resulttext:
-        if i == '\n':
+        if i == '\n' or i == ' ' or i == '\t':
             k += 1
-            if k > 3:
+            if k > 2:
                 continue
         else:
             k = 0
@@ -88,6 +93,7 @@ def kompege(nom):
     while len(mas) == 1:
         mas = mas[0].find_all(recursive=False)
     ans_text = ''
+
     for it in mas:
 
         if it.name == 'pre':
@@ -103,14 +109,14 @@ def kompege(nom):
         else:
             ans_text += it.text
 
-    
+    sp = BeautifulSoup(jres['text'], 'html.parser')
     
     a = sp.find_all('img')
     images = []
     for i in a: ############################# files
         rec = i.get('src')
         if 'data:' not in rec[:8]:
-            rec = rec[2:-2]
+            rec = rec.replace('"', '', 100)
             try:
                 res = requests.get(rec)
             except:
@@ -191,13 +197,11 @@ def findmins():
 
 
 
-#kompege(14405)
-
 for i in range(12780, 13000):
     try:
         if kompege(i):
             print('saved', i)
     except:
         print('GLOBAL EXEPTION!!!')
-findmins()
+
 

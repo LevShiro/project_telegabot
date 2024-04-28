@@ -32,6 +32,8 @@ def update_session(msg):
         database.requests.add((id, 0, msg))
         if all.threaddatalocker.locked():
             all.threaddatalocker.release()
+        if len(all.sessions) > 3000:
+            database.requests.add((None, 6, None))
         return False
 
 
@@ -40,10 +42,10 @@ def update_session(msg):
 def start(msg):
     dialog.sendtemplate('start', msg)
 
-#@all.bot.message_handler(commands=['test'])
+@all.bot.message_handler(commands=['test'])
 def test(msg):
     if msg.chat.id in config.admin_chat_ids:
-        database.requests.add((id, 0, None))
+        database.requests.add((id, 6, None))
         all.threaddatalocker.release()
         print(msg.chat.id) 
         print('end')
@@ -243,11 +245,14 @@ def testready(test, msg, info):
             return
         else:
             dialog.sendtemplate('test_nomer', msg, extend={'task_id': info[1]})
-            all.bot.send_message(msg.chat.id, test['question'])
+            if len(test['question']) != 0:
+                all.bot.send_message(msg.chat.id, test['question'])
             for i in test['images']:
                 all.bot.send_photo(msg.chat.id, i)
             for i in test['files']:
                 all.bot.send_document(msg.chat.id, i)
+            test['images'] = []
+            test['files'] = []
             all.sessions[msg.chat.id][5][info[0] - 1] = info[1]
             all.sessions[msg.chat.id][0] = 5
             all.sessions[msg.chat.id][4] = test

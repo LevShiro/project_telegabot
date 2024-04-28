@@ -184,7 +184,11 @@ def thread():
                     continue
                 print('stats ready')
                 all.statsrdy((result1.content, result2.content), a[2])
-
+            elif a[1] == 6:
+                if len(a) > 2000:
+                    a = max(all.sessions, key=lambda x: abs(time() - all.sessions[x][3]) - 1000 * all.sessions[x][0])
+                    if a in all.sessions:
+                        del all.sessions[a]
 
 
                 
