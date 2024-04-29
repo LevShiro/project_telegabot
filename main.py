@@ -103,8 +103,8 @@ def text(msg):
                 all.threadtestslocker.release()
 
     elif all.sessions[msg.chat.id][0] == 5:
-        a = msg.text.strip()
-        if a == all.sessions[msg.chat.id][4]['ansver']:
+        a = msg.text.strip().lower()
+        if a == all.sessions[msg.chat.id][4]['ansver'].lower():
             database.requests.add((msg.chat.id, 2, msg, all.sessions[msg.chat.id][4]['nomer'], True))
             if all.threaddatalocker.locked():
                 all.threaddatalocker.release()
